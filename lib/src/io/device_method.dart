@@ -169,17 +169,9 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      if (!useAndroidViewSurface) {
-        return AndroidView(
-          viewType: _viewType,
-          onPlatformViewCreated: onPlatformViewCreated,
-          gestureRecognizers: gestureRecognizers,
-          creationParams: creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          layoutDirection: TextDirection.ltr,
-        );
-      }
+      final initMethod = useAndroidViewSurface
+          ? PlatformViewsService.initExpensiveAndroidView
+          : PlatformViewsService.initAndroidView;
 
       return PlatformViewLink(
         viewType: _viewType,
@@ -195,7 +187,7 @@ class MethodChannelUnityWidget extends UnityWidgetPlatform {
           );
         },
         onCreatePlatformView: (PlatformViewCreationParams params) {
-          final controller = PlatformViewsService.initExpensiveAndroidView(
+          final controller = initMethod(
             id: params.id,
             viewType: _viewType,
             layoutDirection: TextDirection.ltr,
