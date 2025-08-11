@@ -1,3 +1,30 @@
+## 2022.3.0 (master branch only)
+* [Web] Switch to `package:web` to support WebAssembly (WASM).
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Fix lint warnings to improve static analysis.
+* Small ReadMe fixes.
+
+**Note:**  
+> This release is unrelated to an old version `2022.3.0-alpha1`, which was based on the `feat/global_unity_controller` git branch.
+
+## 2022.2.2 (master branch only)
+* [Android] Fix touch detection when using Unity's New Input System. [#938](https://github.com/juicycleff/flutter-unity-view-widget/pull/938)
+* [Android] Workaround for mUnityplayer error in Unity plugins using the AndroidJavaProxy. [#908](https://github.com/juicycleff/flutter-unity-view-widget/pull/908)
+* [Android] Add namespace for Android gradle plugin (AGP) 8 compatibility.
+* [Android] Fix kotlin compilation error with Flutter 3.24 and newer. [#973](https://github.com/juicycleff/flutter-unity-view-widget/issues/973)
+* [Android] Update documentation for new `.gradle.kts` files.
+* [Android] Update some ancient build.gradle values to match Unity 2022.3. Like CompileSdk to 34 and Java to 11.
+* [iOS] Add an empty privacy manifest.
+* [Web] Don't crash on unknown event data from Unity.
+* Disable windows support in `pubspec.yaml` to avoid confusion. Windows support was never completed.
+
+## 2022.2.1
+
+* [iOS] Fix Unity not receiving Lifecycle events on iOS. [#704](https://github.com/juicycleff/flutter-unity-view-widget/pull/704)
+* [Android] Remove the white background color to allow Unity transparency like on iOS. [#719](https://github.com/juicycleff/flutter-unity-view-widget/pull/719)
+* [Web] Replace webview package to update `webview_flutter` dependency from 2.x to 4.x. [#761](https://github.com/juicycleff/flutter-unity-view-widget/pull/761)
+* [Web] Add support for web base not being on the root [#865](https://github.com/juicycleff/flutter-unity-view-widget/pull/865)
+
 ## 2022.2.0
 
 * Enable AndroidView due to native view improvement in flutter 3.3.0

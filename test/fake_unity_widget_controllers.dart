@@ -7,7 +7,8 @@ class FakePlatformUnityWidget {
   FakePlatformUnityWidget(int id, Map<dynamic, dynamic> params)
       : channel = MethodChannel(
             'plugin.xraph.com/unity_view_$id', const StandardMethodCodec()) {
-    channel.setMockMethodCallHandler(onMethodCall);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, onMethodCall);
   }
 
   MethodChannel channel;
@@ -15,9 +16,9 @@ class FakePlatformUnityWidget {
   bool playerCreated = false;
   bool playerUnloaded = false;
   bool unityReady = false;
-  bool? unityPaused = null;
-  bool? unityInBackground = null;
-  List<Map<String, dynamic>> _sentMessages = [];
+  bool? unityPaused;
+  bool? unityInBackground;
+  final List<Map<String, dynamic>> _sentMessages = [];
 
   Future<dynamic> onMethodCall(MethodCall call) {
     switch (call.method) {

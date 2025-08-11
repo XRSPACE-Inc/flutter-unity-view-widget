@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  const MenuScreen({super.key});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -34,11 +34,6 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Test Orientation',
       route: '/orientation',
       description: 'test orientation change',
-    ),
-    _MenuListItem(
-      description: 'Unity native activity demo',
-      route: '/activity',
-      title: 'Native Activity Demo ',
     ),
   ];
 
