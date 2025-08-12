@@ -39,23 +39,45 @@ class UnityPlayerUtils {
 
         // async, debounced refocus
         fun refocusAsync() {
-            val player = unityPlayer ?: return
-            if (!unityLoaded) return
-            if (!refocusGate.compareAndSet(false, true)) return
+            Log.d(LOG_TAG, "refocusAsync called")
+            val player = unityPlayer ?: run {
+                Log.d(LOG_TAG, "refocusAsync: unityPlayer is null")
+                return
+            }
+            if (!unityLoaded) {
+                Log.d(LOG_TAG, "refocusAsync: unityLoaded is false")
+                return
+            }
+            if (!refocusGate.compareAndSet(false, true)) {
+                Log.d(LOG_TAG, "refocusAsync: refocusGate is already true")
+                return
+            }
 
+            Log.d(LOG_TAG, "refocusAsync: posting frame callback")
             Choreographer.getInstance().postFrameCallback {
                 try {
                     try {
+                        Log.d(LOG_TAG, "refocusAsync: resuming player")
                         player.resume()
                         unityPaused = false
-                    } catch (_: Throwable) { }
+                    } catch (_: Throwable) {
+                        Log.e(LOG_TAG, "refocusAsync: error resuming player")
+                    }
 
                     val hasWindowFocus = activity?.window?.decorView?.hasWindowFocus() == true
+                    Log.d(LOG_TAG, "refocusAsync: hasWindowFocus = $hasWindowFocus")
                     if (hasWindowFocus) {
-                        try { player.windowFocusChanged(true) } catch (_: Throwable) { }
+                        try {
+                            Log.d(LOG_TAG, "refocusAsync: windowFocusChanged(true)")
+                            player.windowFocusChanged(true)
+                        } catch (_: Throwable) {
+                            Log.e(LOG_TAG, "refocusAsync: error in windowFocusChanged")
+                        }
                     }
+                    Log.d(LOG_TAG, "refocusAsync: requesting focus on player view")
                     (player as? View)?.requestFocus()
                 } finally {
+                    Log.d(LOG_TAG, "refocusAsync: resetting refocusGate")
                     refocusGate.set(false)
                 }
             }

@@ -234,11 +234,15 @@ class FlutterUnityWidgetController(
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        Log.d(LOG_TAG, "onResume")
+        Log.d(LOG_TAG, "onResume called")
+        Log.d(LOG_TAG, "UnityPlayerUtils.unityLoaded: ${UnityPlayerUtils.unityLoaded}")
+        Log.d(LOG_TAG, "UnityPlayerUtils.unityPlayer: ${UnityPlayerUtils.unityPlayer}")
         reattachToView()
         if (UnityPlayerUtils.unityLoaded) {
+            Log.d(LOG_TAG, "Unity is loaded, calling refocusAsync")
             UnityPlayerUtils.refocusAsync()
         } else if (UnityPlayerUtils.unityPlayer == null) {
+            Log.d(LOG_TAG, "UnityPlayer is null, creating player")
             createPlayer()
         }
         UnityPlayerUtils.viewStaggered = false
