@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import android.util.Log
+import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
@@ -13,12 +14,15 @@ import android.widget.FrameLayout
 import com.unity3d.player.IUnityPlayerLifecycleEvents
 import com.unity3d.player.UnityPlayer
 import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.atomic.AtomicBoolean
 
 
 class UnityPlayerUtils {
 
     companion object {
         private const val LOG_TAG = "UnityPlayerUtils"
+
+        private val refocusGate = AtomicBoolean(false)
 
         var controllers: ArrayList<FlutterUnityWidgetController> = ArrayList()
         var unityPlayer: CustomUnityPlayer? = null
@@ -32,6 +36,30 @@ class UnityPlayerUtils {
         var viewStaggered: Boolean = false
 
         private val mUnityEventListeners = CopyOnWriteArraySet<UnityEventListener>()
+
+        // async, debounced refocus
+        fun refocusAsync() {
+            val player = unityPlayer ?: return
+            if (!unityLoaded) return
+            if (!refocusGate.compareAndSet(false, true)) return
+
+            Choreographer.getInstance().postFrameCallback {
+                try {
+                    try {
+                        player.resume()
+                        unityPaused = false
+                    } catch (_: Throwable) { }
+
+                    val hasWindowFocus = activity?.window?.decorView?.hasWindowFocus() == true
+                    if (hasWindowFocus) {
+                        try { player.windowFocusChanged(true) } catch (_: Throwable) { }
+                    }
+                    (player as? View)?.requestFocus()
+                } finally {
+                    refocusGate.set(false)
+                }
+            }
+        }
 
         fun focus() {
             try {

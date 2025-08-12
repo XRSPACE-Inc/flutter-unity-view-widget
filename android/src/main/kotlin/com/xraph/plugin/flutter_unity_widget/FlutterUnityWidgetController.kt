@@ -68,7 +68,7 @@ class FlutterUnityWidgetController(
 
         if(UnityPlayerUtils.unityPlayer == null) {
             createPlayer()
-            refocusUnity()
+            // refocusUnity() // try not to call this here, it will be called in onResume
         } else if(!UnityPlayerUtils.unityLoaded) {
             createPlayer()
             attachToView()
@@ -117,7 +117,7 @@ class FlutterUnityWidgetController(
             "unity#createPlayer" -> {
                 invalidateFrameIfNeeded()
                 this.createPlayer()
-                refocusUnity()
+                UnityPlayerUtils.refocusAsync()
                 result.success(null)
             }
             "unity#isReady" -> {
@@ -236,11 +236,12 @@ class FlutterUnityWidgetController(
     override fun onResume(owner: LifecycleOwner) {
         Log.d(LOG_TAG, "onResume")
         reattachToView()
-        if(UnityPlayerUtils.viewStaggered && UnityPlayerUtils.unityLoaded) {
-            this.createPlayer()
-            refocusUnity()
-            UnityPlayerUtils.viewStaggered = false
+        if (UnityPlayerUtils.unityLoaded) {
+            UnityPlayerUtils.refocusAsync()
+        } else if (UnityPlayerUtils.unityPlayer == null) {
+            createPlayer()
         }
+        UnityPlayerUtils.viewStaggered = false
     }
 
     override fun onPause(owner: LifecycleOwner) {
@@ -356,7 +357,8 @@ class FlutterUnityWidgetController(
     }
 
     fun reattachToView() {
-        if (UnityPlayerUtils.unityPlayer!!.parent != view) {
+        val player = UnityPlayerUtils.unityPlayer ?: return
+        if (player.parent != view) {
             this.attachToView()
             Handler(Looper.getMainLooper()).post {
                 methodChannel.invokeMethod("events#onViewReattached", null)
